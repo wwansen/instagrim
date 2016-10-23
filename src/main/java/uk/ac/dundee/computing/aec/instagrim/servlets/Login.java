@@ -6,9 +6,15 @@
 
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
+import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -50,6 +56,7 @@ public class Login extends HttpServlet {
         
         String username=request.getParameter("username");
         String password=request.getParameter("password");
+        String email=request.getParameter("email");
         
         User us=new User();
         us.setCluster(cluster);
@@ -59,15 +66,28 @@ public class Login extends HttpServlet {
         if (isValid){
             LoggedIn lg= new LoggedIn();
             lg.setLogedin();
-            lg.setUsername(username);
-            //request.setAttribute("LoggedIn", lg);
+            lg.setUsername(username);    
             
+            Session session1 = cluster.connect("instagrim");
+            PreparedStatement psInsertPicToUser = session1.prepare("select picid from userprofiles where login=?");
+            BoundStatement bsInsertPicToUser = new BoundStatement(psInsertPicToUser);
+            ResultSet rs =session1.execute(bsInsertPicToUser.bind(username));
+            session1.close();
+            String tt=null;
+            for (Row row:rs)
+            {
+                tt=row.toString();
+            }
+            System.out.print(tt);
+            session.setAttribute("userpic", tt.substring(4,tt.length()-1));
+            if (tt.length()>10) lg.setHavepic();
             session.setAttribute("LoggedIn", lg);
             System.out.println("Session in servlet "+session);
             RequestDispatcher rd=request.getRequestDispatcher("index.jsp");
 	    rd.forward(request,response);
             
         }else{
+            session.setAttribute("info", "Invalide username or password!");
             response.sendRedirect("/Instagrim/login.jsp");
         }
         

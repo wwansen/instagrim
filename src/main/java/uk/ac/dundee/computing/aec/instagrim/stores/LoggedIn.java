@@ -12,11 +12,14 @@ package uk.ac.dundee.computing.aec.instagrim.stores;
  */
 public class LoggedIn {
     boolean logedin=false;
+    boolean havepic=false;
     String Username=null;
     public void LogedIn(){
         
     }
-    
+    public void setHavepic(){
+        havepic=true;
+    }
     public void setUsername(String name){
         this.Username=name;
     }
@@ -35,5 +38,8 @@ public class LoggedIn {
     }
     public boolean getlogedin(){
         return logedin;
+    }
+    public boolean gethavepic(){
+        return havepic;
     }
 }

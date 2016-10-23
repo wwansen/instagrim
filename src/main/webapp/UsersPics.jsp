@@ -17,14 +17,19 @@
     <body>
         <header>
         
-        <h1>InstaGrim ! </h1>
-        <h2>Your world in Black and White</h2>
+         <h1><i><center>I n s t a G r i m ! </center></i></h1>
+ 
         </header>
         
         <nav>
             <ul>
+                <%
+                      LoggedIn lg3 = (LoggedIn) session.getAttribute("LoggedIn");
+                      String UserName = lg3.getUsername();
+                 %>
+                <li><a href="/Instagrim">Home</a></li>
                 <li class="nav"><a href="/Instagrim/upload.jsp">Upload</a></li>
-                <li class="nav"><a href="/Instagrim/Images/majed">Sample Images</a></li>
+                <li class="nav"><a style="text-decoration: none"href="/Instagrim/Images/<%=lg3.getUsername()%>">Your Images</a> </li>
             </ul>
         </nav>
  
@@ -49,10 +54,6 @@
             }
         %>
         </article>
-        <footer>
-            <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
-            </ul>
-        </footer>
+     
     </body>
 </html>

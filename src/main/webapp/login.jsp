@@ -11,17 +11,19 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Instagrim</title>
         <link rel="stylesheet" type="text/css" href="Styles.css" />
-
+        <script type="text/javascript">
+            
+        </script>
     </head>
-    <body>
+<body>
         <header>
-        <h1>InstaGrim ! </h1>
-        <h2>Your world in Black and White</h2>
+         <h1><i><center>I n s t a G r i m ! </center></i></h1>
+        
         </header>
         <nav>
             <ul>
-                
-                <li><a href="/Instagrim/Images/majed">Sample Images</a></li>
+                <li><a href="/Instagrim">Home</a></li>
+              
             </ul>
         </nav>
        
@@ -33,14 +35,11 @@
                     <li>Password <input type="password" name="password"></li>
                 </ul>
                 <br/>
-                <input type="submit" value="Login"> 
+                <p>${info}<p>
+                <li><input type="submit" value="Submit"></li>
             </form>
-
+           
         </article>
-        <footer>
-            <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
-            </ul>
-        </footer>
+      
     </body>
 </html>

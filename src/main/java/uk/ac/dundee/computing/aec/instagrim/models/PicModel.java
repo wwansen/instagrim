@@ -19,6 +19,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.utils.Bytes;
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.LinkedList;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpSession;
 import static org.imgscalr.Scalr.*;
 import org.imgscalr.Scalr.Method;
 
@@ -87,6 +89,46 @@ public class PicModel {
         }
     }
 
+    public String insertuserPic(byte[] b, String type, String name, String user) {
+        Convertors convertor = new Convertors();
+        java.util.UUID picid = convertor.getTimeUUID();
+        try {
+            
+
+            String types[]=Convertors.SplitFiletype(type);
+            ByteBuffer buffer = ByteBuffer.wrap(b);
+            int length = b.length;
+            
+            
+            //The following is a quick and dirty way of doing this, will fill the disk quickly !
+            Boolean success = (new File("/var/tmp/instagrim/")).mkdirs();
+            FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
+
+            output.write(b);
+            byte []  thumbb = picresize(picid.toString(),types[1]);
+            int thumblength= thumbb.length;
+            ByteBuffer thumbbuf=ByteBuffer.wrap(thumbb);
+            byte[] processedb = picdecolour(picid.toString(),types[1]);
+            ByteBuffer processedbuf=ByteBuffer.wrap(processedb);
+            int processedlength=processedb.length;
+            Session session = cluster.connect("instagrim");
+
+            PreparedStatement psInsertPic = session.prepare("insert into pics ( picid, image,thumb,processed, user, interaction_time,imagelength,thumblength,processedlength,type,name) values(?,?,?,?,?,?,?,?,?,?,?)");
+            PreparedStatement psInsertPicToUser = session.prepare("update userprofiles set picid=? where login=?");
+            BoundStatement bsInsertPic = new BoundStatement(psInsertPic);
+            BoundStatement bsInsertPicToUser = new BoundStatement(psInsertPicToUser);
+
+            Date DateAdded = new Date();
+            session.execute(bsInsertPic.bind(picid, buffer, thumbbuf,processedbuf, user, DateAdded, length,thumblength,processedlength, type, name));
+            session.execute(bsInsertPicToUser.bind(picid, user));
+            session.close();
+            
+        } catch (IOException ex) {
+            System.out.println("Error --> " + ex);
+        }
+        return picid.toString();
+    }
+    
     public byte[] picresize(String picid,String type) {
         try {
             BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
@@ -121,14 +163,14 @@ public class PicModel {
     }
 
     public static BufferedImage createThumbnail(BufferedImage img) {
-        img = resize(img, Method.SPEED, 250, OP_ANTIALIAS, OP_GRAYSCALE);
+        img = resize(img, Method.SPEED, 250, OP_ANTIALIAS);
         // Let's add a little border before we return result.
         return pad(img, 2);
     }
     
    public static BufferedImage createProcessed(BufferedImage img) {
         int Width=img.getWidth()-1;
-        img = resize(img, Method.SPEED, Width, OP_ANTIALIAS, OP_GRAYSCALE);
+        img = resize(img, Method.SPEED, Width, OP_ANTIALIAS);
         return pad(img, 4);
     }
    
