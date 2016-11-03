@@ -18,7 +18,6 @@
     <body>
         <header>
             <h1><i><center>I n s t a G r i m ! </center></i></h1>
-           
         </header>
         	
 			
@@ -36,9 +35,9 @@
                     %>
                 <li> <a style="text-decoration: none"href="upload.jsp">Upload</a></li> 
                 <li> <a style="text-decoration: none"href="/Instagrim/Images/<%=lg.getUsername()%>"><%=UserName%> Images</a> </li>   
-                <li> <a style="text-decoration: none"href="/Instagrim/Logout">Log out</a></li> 
                 <li> <a style="text-decoration: none"href="/Instagrim/userprofile">upload userprofile</a></li> 
-            
+                <li><a style="text-decoration: none" href="/Instagrim/setting">Setting</a></li>
+                <li> <a style="text-decoration: none"href="/Instagrim/Logout">Log out</a></li> 
                 <div style="width:350px;    float:left;    padding:10px;">
                 <br><h2>Welcome ! <%=lg.getUsername()%></h2><br>
                 </div>   
@@ -46,7 +45,7 @@
 
                 } else{//否则为注册和登录选项
                                 %>
-                 <li><a style="text-decoration: none" href="register.jsp">Register</a></li>
+                <li><a style="text-decoration: none" href="register.jsp">Register</a></li>
                 <li><a style="text-decoration: none" href="login.jsp">Login</a></li>
                 <%
                                         

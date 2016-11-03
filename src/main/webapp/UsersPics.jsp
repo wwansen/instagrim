@@ -30,6 +30,7 @@
                 <li><a href="/Instagrim">Home</a></li>
                 <li class="nav"><a href="/Instagrim/upload.jsp">Upload</a></li>
                 <li class="nav"><a style="text-decoration: none"href="/Instagrim/Images/<%=lg3.getUsername()%>">Your Images</a> </li>
+                
             </ul>
         </nav>
  

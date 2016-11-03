@@ -28,14 +28,14 @@
         </nav>
        
         <article>
-            <h3>Login</h3>
+            <h3> Login</h3>
             <form method="POST"  action="Login">
                 <ul>
                     <li>User Name <input type="text" name="username"></li>
                     <li>Password <input type="password" name="password"></li>
                 </ul>
                 <br/>
-                <p>${info}<p>
+                <%--<p>${info}<p> --%>
                 <li><input type="submit" value="Submit"></li>
             </form>
            

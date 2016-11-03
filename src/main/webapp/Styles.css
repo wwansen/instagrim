@@ -9,8 +9,14 @@ and open the template in the editor.
 */
 
 		
-body {background-image: url("1.jpg");
-background-repeat: x;}
+body {  
+    
+  background-image:url(1.jpg);
+  background-repeat:repeat-x;
+  background-attachment:fixed;
+  background-position:center;
+}
+h1 {color:#00ff00}
 
 * {
    margin: 0;   
@@ -35,7 +41,7 @@ li:last-child {
 }       
 li a {
    text-decoration: none;   
-   color: #ccc;   
+   color: #CCFF33;   
    font: 25px/1 Helvetica, Verdana, sans-serif;   
    text-transform: uppercase; 
         
@@ -46,9 +52,12 @@ li a {
    transition: all 0.5s ease; 
 }       
 li a:hover {
-   color: #666; 
+   color: #CCFF00; 
 }       
 li.active a {
    font-weight: bold;   
    color: #333; 
+}
+div{
+    color: red;
 }

@@ -52,7 +52,7 @@ public class PicModel {
         this.cluster = cluster;
     }
 
-    public void insertPic(byte[] b, String type, String name, String user) {
+    public void insertPic(byte[] b, String type, String name, String user,int effect) {
         try {
             Convertors convertor = new Convertors();
 
@@ -66,10 +66,10 @@ public class PicModel {
             FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
 
             output.write(b);
-            byte []  thumbb = picresize(picid.toString(),types[1]);
+            byte []  thumbb = picresize(picid.toString(),types[1],effect);
             int thumblength= thumbb.length;
             ByteBuffer thumbbuf=ByteBuffer.wrap(thumbb);
-            byte[] processedb = picdecolour(picid.toString(),types[1]);
+            byte[] processedb = picdecolour(picid.toString(),types[1],effect);
             ByteBuffer processedbuf=ByteBuffer.wrap(processedb);
             int processedlength=processedb.length;
             Session session = cluster.connect("instagrim");
@@ -103,12 +103,12 @@ public class PicModel {
             //The following is a quick and dirty way of doing this, will fill the disk quickly !
             Boolean success = (new File("/var/tmp/instagrim/")).mkdirs();
             FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
-
+            int effect=1;
             output.write(b);
-            byte []  thumbb = picresize(picid.toString(),types[1]);
+            byte []  thumbb = picresize(picid.toString(),types[1],effect);
             int thumblength= thumbb.length;
             ByteBuffer thumbbuf=ByteBuffer.wrap(thumbb);
-            byte[] processedb = picdecolour(picid.toString(),types[1]);
+            byte[] processedb = picdecolour(picid.toString(),types[1],effect);
             ByteBuffer processedbuf=ByteBuffer.wrap(processedb);
             int processedlength=processedb.length;
             Session session = cluster.connect("instagrim");
@@ -129,10 +129,11 @@ public class PicModel {
         return picid.toString();
     }
     
-    public byte[] picresize(String picid,String type) {
+    public byte[] picresize(String picid,String type,int effect) {
         try {
             BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
-            BufferedImage thumbnail = createThumbnail(BI);
+            
+            BufferedImage thumbnail = createThumbnail(BI,effect);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(thumbnail, type, baos);
             baos.flush();
@@ -146,10 +147,10 @@ public class PicModel {
         return null;
     }
     
-    public byte[] picdecolour(String picid,String type) {
+    public byte[] picdecolour(String picid,String type,int effect) {
         try {
             BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
-            BufferedImage processed = createProcessed(BI);
+            BufferedImage processed = createProcessed(BI,effect);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processed, type, baos);
             baos.flush();
@@ -162,15 +163,19 @@ public class PicModel {
         return null;
     }
 
-    public static BufferedImage createThumbnail(BufferedImage img) {
-        img = resize(img, Method.SPEED, 250, OP_ANTIALIAS);
+    public static BufferedImage createThumbnail(BufferedImage img,int effect) {
+        if (effect==1){
+        img = resize(img, Method.SPEED, 250, OP_ANTIALIAS,OP_GRAYSCALE);}else{img = resize(img, Method.SPEED, 250);}
         // Let's add a little border before we return result.
         return pad(img, 2);
     }
     
-   public static BufferedImage createProcessed(BufferedImage img) {
+   public static BufferedImage createProcessed(BufferedImage img,int effect) {
         int Width=img.getWidth()-1;
-        img = resize(img, Method.SPEED, Width, OP_ANTIALIAS);
+        if (effect==1){
+        img = resize(img, Method.SPEED, Width, OP_ANTIALIAS,OP_GRAYSCALE);}else{
+            img = resize(img, Method.SPEED, Width, OP_ANTIALIAS);
+        }
         return pad(img, 4);
     }
    

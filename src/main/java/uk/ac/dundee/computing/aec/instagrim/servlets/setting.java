@@ -6,9 +6,15 @@
 
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
+import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,21 +25,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.models.User;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 
 /**
  *
  * @author Administrator
  */
-@WebServlet(name = "Register", urlPatterns = {"/Register"})
-public class Register extends HttpServlet {
+@WebServlet(name = "setting", urlPatterns = {"/setting","/setting/*"})
+public class setting extends HttpServlet {
+
     Cluster cluster=null;
+
+
     public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
         cluster = CassandraHosts.getCluster();
     }
-
-
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -46,23 +53,31 @@ public class Register extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username=request.getParameter("username");
-        String password=request.getParameter("password");
+        HttpSession session1=request.getSession();
+        LoggedIn lg=(LoggedIn)session1.getAttribute("LoggedIn");
+        String username=lg.getUsername();
         String firstname=request.getParameter("firstname");
         String surname=request.getParameter("surname");        
         String email=request.getParameter("email");
-        User us=new User();
-        us.setCluster(cluster);
-        us.RegisterUser(username, firstname, surname, password, email);
         
-        HttpSession session=request.getSession();
-        session.setAttribute("user_name",username);
-        session.setAttribute("user_email",email);
-        System.out.println(username+password+email);
+        Session session = cluster.connect("instagrim");
+        PreparedStatement ps = session.prepare("update userprofiles set first_name=?,last_name=? where login=?");
+       
+        BoundStatement boundStatement = new BoundStatement(ps);
+        session.execute( // this is where the query is executed
+                boundStatement.bind( // here you are binding the 'boundStatement'
+                        firstname,surname,username));
+       lg.setUsername(username);
+       session1.setAttribute("LoggedIn", lg);
 	response.sendRedirect("/Instagrim");
-        String asd=(String)session.getAttribute("user_email");
+        
     }
-   // public void getUsername(){    return }
+
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            
+                RequestDispatcher rd=request.getRequestDispatcher("setting.jsp");
+	    rd.forward(request,response);
+            }
     /**
      * Returns a short description of the servlet.
      *

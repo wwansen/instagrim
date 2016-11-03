@@ -23,9 +23,7 @@
                       String UserName = lg2.getUsername();
                  %>
                  <li><a href="/Instagrim">Home</a></li>
-                <li class="nav"><a href="upload.jsp">Upload</a></li>
-                <li class="nav"><a href="/Instagrim/Images/majed">Sample Images</a></li>
-                <li class="nav"><a style="text-decoration: none"href="/Instagrim/Images/<%=lg2.getUsername()%>">Your Images</a> </li>
+                 <li class="nav"><a style="text-decoration: none"href="/Instagrim/Images/<%=lg2.getUsername()%>">Your Images</a> </li>
             </ul>
         </nav>
  
@@ -33,6 +31,10 @@
             <h3>File Upload</h3>
             <form method="POST" enctype="multipart/form-data" action="Image">
                 File to upload: <input type="file" name="upfile"><br/>
+<select select name="selectcondition" id="selectcondition">
+                            <option value="1">Grey the pic</option>
+                            <option value="2">Normal</option>
+                        </select>
 
                 <br/>
                 <input type="submit" value="Press"> to upload the file!

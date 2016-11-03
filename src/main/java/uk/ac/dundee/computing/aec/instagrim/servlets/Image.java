@@ -91,15 +91,15 @@ public class Image extends HttpServlet {
                 DisplayImage(Convertors.DISPLAY_THUMB, args[2], response);
                 break;
             case 4:
-
+session.setAttribute("uploaduserfile", "yes");
+        RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
+        rd.forward(request, response);
                 break;
             default:
                 error("Bad Operator", response);
         }
  
-         session.setAttribute("uploaduserfile", "yes");
-        RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
-        rd.forward(request, response);
+         
     }
 
     private void DisplayImageList(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -158,10 +158,16 @@ public class Image extends HttpServlet {
                 System.out.print(uploaduserfile);
                 if (uploaduserfile.equals("yes")) {
                     System.out.print("inside upload userprofile");
+                    lg.setHavepic();
+                    session.setAttribute("LoggedIn", lg);
                     String a=tm.insertuserPic(b, type, filename, username);
                     session.setAttribute("userpic",a);
+                    session.setAttribute("uploaduserfile","no");
                 }else{
-                tm.insertPic(b, type, filename, username);
+                    String select = (String) request.getParameter("selectcondition");
+                        int effecttype = Integer.parseInt(select);
+ 
+                tm.insertPic(b, type, filename, username,effecttype);
                 }
                 is.close();
             }
